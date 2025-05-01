@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\TaskCreateRequest;
+use App\Http\Requests\Api\TaskDeleteRequest;
 use App\Http\Requests\Api\TaskListRequest;
 use App\Http\Requests\Api\TaskUpdateRequest;
 use App\Http\Resources\TaskResource;
@@ -71,6 +72,19 @@ class TaskController extends Controller
         );
 
         return TaskResource::collection($list);
+    }
+
+    public function delete(TaskDeleteRequest $request): JsonResponse
+    {
+        $this->taskService->delete([
+            'id' => $request->get('id')
+        ]);
+
+        return $this->response(
+            (object) [],
+            'Successfully deleted task.',
+            Response::HTTP_NO_CONTENT,
+        );
     }
 
     /**

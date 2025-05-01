@@ -38,4 +38,14 @@ class TaskService
     {
         return $this->taskRepository->list($filters, $pagination);
     }
+
+    public function delete(array $filters)
+    {
+        // Do not allow to delete if no filters are given
+        if (empty($filters)) {
+            return false;
+        }
+
+        return $this->taskRepository->delete($filters);
+    }
 }

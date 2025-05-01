@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Task;
+use Carbon\Carbon;
 use Illuminate\Pagination\Paginator;
 
 class TaskRepository
@@ -36,6 +37,22 @@ class TaskRepository
         return $this->task
             ->where('id', $id)
             ->update($payload);
+    }
+
+    public function delete(array $filters)
+    {
+        return $this->task
+            ->when(!empty($filters['id']), fn ($query) => (
+                $query->where('id', $filters['id'])
+            ))
+            ->when(!empty($filters['days_past']), fn ($query) => (
+                $query->where(
+                    'created_at',
+                    '<',
+                    Carbon::now()->subDays($filters['days_past'])
+                )
+            ))
+            ->delete();
     }
 
     public function list(array $filters, array $pagination): Paginator
