@@ -1,12 +1,12 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
 import InputFile from '@/Components/InputFile.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+import InputLabel from '@/Components/InputLabel.vue'
 import MultiTextInput from '@/Components/MultiTextInput.vue'
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue'
+import SecondaryButton from '@/Components/SecondaryButton.vue'
 import Service from '../../../service.js'
-import TextInput from '@/Components/TextInput.vue';
+import TextInput from '@/Components/TextInput.vue'
 import { ref } from 'vue'
 import { Link, useForm, usePage } from '@inertiajs/vue3'
 

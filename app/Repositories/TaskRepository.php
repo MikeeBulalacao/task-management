@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Task;
 use Carbon\Carbon;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TaskRepository
 {
@@ -91,9 +91,9 @@ class TaskRepository
      * @param array $filters
      * @param array $pagination
      * 
-     * @return Paginator
+     * @return LengthAwarePaginator
      */
-    public function list(array $filters, array $pagination): Paginator
+    public function list(array $filters, array $pagination): LengthAwarePaginator
     {
         return $this->task
             ->select(
@@ -113,11 +113,6 @@ class TaskRepository
                 $filters['order_by'] ?? self::DEFAULT_ORDER,
                 $filters['order_dir'] ?? self::DEFAULT_ORDER_DIR
             )
-            ->simplePaginate(
-                $pagination['per_page'] ?? 100,
-                [],
-                'page',
-                $pagination['page'] ?? 1
-            );
+            ->paginate($pagination['per_page'] ?? 100);
     }
 }

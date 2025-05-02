@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Task extends Model
 {
@@ -86,6 +87,11 @@ class Task extends Model
     protected $casts = [
         'published' => 'boolean',
     ];
+
+    public function getAttachmentAttribute(?string $value = null)
+    {
+        return $value ? Storage::url($value) : $value;
+    }
 
     public function scopeOwnTask(Builder $query, int $userId)
     {

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Task;
 use App\Repositories\TaskRepository;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TaskService
 {
@@ -60,9 +60,9 @@ class TaskService
      * @param array $filters
      * @param array $pagination
      * 
-     * @return Paginator
+     * @return LengthAwarePaginator
      */
-    public function list(array $filters, array $pagination): Paginator
+    public function list(array $filters, array $pagination): LengthAwarePaginator
     {
         return $this->taskRepository->list($filters, $pagination);
     }

@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import CreateTask from './Partials/CreateTask.vue'
 import DangerButton from '@/Components/DangerButton.vue'
 import Modal from '@/Components/Modal.vue'
+import Pagination from '@/Components/Pagination.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
 import Service from '../../service.js'
 import TextInput from '@/Components/TextInput.vue'
@@ -13,7 +14,7 @@ const attrs = useAttrs()
 
 const displayCreateModal = ref(false);
 const pagination = ref({
-    per_page: 10,
+    per_page: 5,
     page: 1
 })
 const status = ref('to-do')
@@ -44,6 +45,14 @@ const publishTask = async (task) => {
 const reloadTasks = () => {
     loadTasks()
     displayTaskModal(false)
+}
+
+const updatePagination = (pageData) => {
+    pagination.value = {
+        per_page: pageData.per_page,
+        page: pageData.page
+    }
+    loadTasks()
 }
 
 const loadTasks = async () => {
@@ -136,33 +145,12 @@ onMounted(() => {
             </div>
 
             <div>
-                <form class="form-inline justify-center">
-                  <select name="limit" id="limit" class="mr-2">
-                    <option value="10">10</option>
-                    <option value="25" >25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                  <nav>
-                      <ul class="pagination mb-0">
-                        <li class="page-item disabled">
-                          <a class="page-link" href="#">Previous</a>
-                        </li>
-                        <li class="page-item active">
-                          <a class="page-link" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">Next</a>
-                        </li>
-                      </ul>
-                    </nav>
-                </form>
+                <Pagination
+                    :total="tasks?.meta?.total || 1"
+                    :current-page="tasks?.meta?.current_page || 1"
+                    :last-page="tasks?.meta?.last_page || 1"
+                    @update:page="updatePagination"
+                ></Pagination>
             </div>
         </div>
 
