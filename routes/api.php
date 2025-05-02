@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,4 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/task', 'TaskController@create');
     Route::patch('/task/{id}', 'TaskController@update');
     Route::get('/task', 'TaskController@list');
+    Route::delete('/task/{id}', 'TaskController@delete');
 });

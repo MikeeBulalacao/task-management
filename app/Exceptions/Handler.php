@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -23,8 +27,26 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (Exception $exception, Request $request) {
+            if ($request->is('api/*')) {
+                logger()
+                    ->error(
+                        sprintf('%s: %s', __METHOD__, $exception->getMessage()),
+                        [
+                            'trace' => $exception->getTraceAsString(),
+                            'request' => $request->all(),
+                        ]
+                    );
+
+                $code = $exception instanceof ValidationException
+                    ? Response::HTTP_UNPROCESSABLE_ENTITY
+                    : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+                return response()->json([
+                    'status' => false,
+                    'message' => $exception->getMessage(),
+                ], $code);
+            }
         });
     }
 }

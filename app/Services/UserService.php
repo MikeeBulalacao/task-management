@@ -8,12 +8,16 @@ use App\Repositories\UserRepository;
 class UserService
 {
     /**
-     * UserRepository $userRepository
+     * @var UserRepository $userRepository
      */
     private UserRepository $userRepository;
 
     /**
      * UserService constructor method
+     * 
+     * @param UserRepository $userRepository
+     * 
+     * @return void
      */
     public function __construct(UserRepository $userRepository)
     {
@@ -22,6 +26,10 @@ class UserService
 
     /**
      * Handles creating a user
+     * 
+     * @param array $payload
+     * 
+     * @return User
      */
     public function create(array $payload): User
     {

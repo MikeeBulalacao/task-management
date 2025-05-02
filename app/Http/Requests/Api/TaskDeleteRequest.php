@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class TaskDeleteRequest extends FormRequest
 {
@@ -17,5 +16,15 @@ class TaskDeleteRequest extends FormRequest
         return [
             'id' => 'required|exists:tasks,id,deleted_at,NULL,user_id,' . $this->user()->id,
         ];
+    }
+
+    /**
+     * Merge the needed parameters before validating
+     * 
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge(['id' => $this->route('id')]);
     }
 }

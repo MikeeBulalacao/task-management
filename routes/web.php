@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,21 +13,13 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', fn () => redirect('/register'));
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard/Dashboard');
-})->middleware(['auth'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', 'ProfileController@edit')->name('profile.edit');
-    Route::patch('/profile', 'ProfileController@update')->name('profile.update');
-    Route::delete('/profile', 'ProfileController@destroy')->name('profile.destroy');
-
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     Route::post('logout', 'Auth\AuthenticatedSessionController@destroy')->name('logout');
 });
 
 Route::middleware('guest')->group(function () {
+    Route::get('/', fn () => redirect('/register'));
     Route::get('register', 'Auth\RegisteredUserController@create')->name('register');
     Route::get('login', 'Auth\AuthenticatedSessionController@create')->name('login');
     Route::post('login', 'Auth\AuthenticatedSessionController@store');

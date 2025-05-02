@@ -6,11 +6,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
-    use HasUuids;
-    use SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes;
+
+    /**
+     * @var array
+     */
+    public const STATUS = [
+        'to-do' => 'To-do',
+        'in-progress' => 'In-progress',
+        'done' => 'Done',
+    ];
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -44,6 +53,7 @@ class Task extends Model
         'title',
         'content',
         'status',
+        'published',
         'attachment',
         'created_at',
         'updated_at',
@@ -61,10 +71,20 @@ class Task extends Model
         'title',
         'content',
         'status',
+        'published',
         'attachment',
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    /**
+     * The attributes that will be casted
+     *
+     * @var array
+     */
+    protected $casts = [
+        'published' => 'boolean',
     ];
 
     public function scopeOwnTask(Builder $query, int $userId)

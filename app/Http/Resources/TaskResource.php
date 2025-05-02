@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,9 @@ class TaskResource extends JsonResource
             'user_id' => $this->user_id,
             'title' => $this->title,
             'content' => $this->content,
+            'attachment' => $this->attachment,
+            'status' => Task::STATUS[$this->status],
+            'published' => $this->published,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

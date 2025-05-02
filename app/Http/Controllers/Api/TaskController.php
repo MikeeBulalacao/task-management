@@ -16,12 +16,16 @@ use Illuminate\Http\Response;
 class TaskController extends Controller
 {
     /**
-     * TaskService $taskService
+     * @var TaskService $taskService
      */
     private TaskService $taskService;
 
     /**
      * TaskController constructor method
+     * 
+     * @param TaskService $taskService
+     * 
+     * @return void
      */
     public function __construct(TaskService $taskService)
     {
@@ -29,12 +33,18 @@ class TaskController extends Controller
     }
 
     /**
-     * Display the user's profile form.
+     * Method for creating tasks
+     * 
+     * @param TaskCreateRequest $request
+     * 
+     * @return JsonResponse
      */
     public function create(TaskCreateRequest $request): JsonResponse
     {
         $payload = $request->validated();
+        $payload['published'] = $request->boolean('published', false);
         $payload['user_id'] = auth()->user()->id;
+
         $task = $this->taskService->create($payload);
 
         return $this->response(
@@ -44,23 +54,36 @@ class TaskController extends Controller
         );
     }
 
+    /**
+     * Method for updating tasks
+     * 
+     * @param TaskUpdateRequest $request
+     * 
+     * @return JsonResponse
+     */
     public function update(TaskUpdateRequest $request): JsonResponse
     {
         $payload = $request->validated();
         unset($payload['id']);
 
         $task = $this->taskService->update(
-            $request->get('id'),
+            $request->input('id'),
             $payload
         );
 
         return $this->response(
-            new TaskResource($task),
-            'Successfully created task.',
-            Response::HTTP_CREATED,
+            (object) ['task_id' => $request->input('id')],
+            'Successfully updated task.'
         );
     }
 
+    /**
+     * Method for updating tasks
+     * 
+     * @param TaskListRequest $request
+     * 
+     * @return AnonymousResourceCollection
+     */
     public function list(TaskListRequest $request): AnonymousResourceCollection
     {
         $filters = $request->validated();
@@ -74,6 +97,13 @@ class TaskController extends Controller
         return TaskResource::collection($list);
     }
 
+    /**
+     * Method for updating tasks
+     * 
+     * @param TaskDeleteRequest $request
+     * 
+     * @return JsonResponse
+     */
     public function delete(TaskDeleteRequest $request): JsonResponse
     {
         $this->taskService->delete([
@@ -89,6 +119,12 @@ class TaskController extends Controller
 
     /**
      * In charge of returning the JsonResponse
+     * 
+     * @param object $resource
+     * @param int $status
+     * @param string $message
+     * 
+     * @return JsonResponse
      */
     private function response(
         object $resource,

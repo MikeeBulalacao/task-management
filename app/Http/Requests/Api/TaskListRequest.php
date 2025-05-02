@@ -2,22 +2,29 @@
 
 namespace App\Http\Requests\Api;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class TaskListRequest extends FormRequest
 {
+    /**
+     * @var array
+     */
     private const ORDER_BY = [
         'title',
         'created_at',
     ];
 
+    /**
+     * @var array
+     */
     private const ORDER_DIR = [
         'asc',
         'desc',
     ];
 
+    /**
+     * @var array
+     */
     private const STATUSES = [
         'to-do',
         'in-progress',
@@ -34,17 +41,22 @@ class TaskListRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'status' => 'sometimes|required|in:' . implode(',', self::STATUSES),
-            'search' => 'sometimes|required|string',
+            'search' => 'nullable',
             'order_by' => 'sometimes|required|in:' . implode(',', self::ORDER_BY),
             'order_dir' => 'sometimes|required|in:' . implode(',', self::ORDER_DIR),
         ];
     }
 
+    /**
+     * Return the pagination data
+     * 
+     * @return array
+     */
     public function pagination()
     {
         return [
-            'per_page' => 100,
-            'page' => 1,
+            'per_page' => $this->get('per_page', 100),
+            'page' => $this->get('page', 1),
         ];
     }
 }

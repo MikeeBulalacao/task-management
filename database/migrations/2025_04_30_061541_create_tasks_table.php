@@ -16,8 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('title', 100);
             $table->string('content');
+            $table->boolean('published');
             $table->string('status')->default('to-do');
-            $table->json('attachment')->nullable();
+            $table->text('attachment')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

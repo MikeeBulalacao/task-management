@@ -15,12 +15,16 @@ use Illuminate\Support\Facades\Hash;
 class RegisteredUserController extends Controller
 {
     /**
-     * UserService $userService
+     * @var UserService $userService
      */
     private UserService $userService;
 
     /**
      * RegisteredUserController constructor method
+     * 
+     * @var UserService $userService
+     * 
+     * @return void
      */
     public function __construct(UserService $userService)
     {
@@ -29,11 +33,15 @@ class RegisteredUserController extends Controller
 
     /**
      * Handle an incoming registration request.
+     * 
+     * @param RegisterRequest $request
+     * 
+     * @return JsonResponse
      */
     public function store(RegisterRequest $request): JsonResponse
     {
         $payload = $request->validated();
-        $payload['password'] = Hash::make($request->get('password'));
+        $payload = $this->encryptPassword($request->validated());
 
         $user = $this->userService->create($payload);
         $this->logUserIn($user);
@@ -47,6 +55,12 @@ class RegisteredUserController extends Controller
 
     /**
      * In charge of returning the JsonResponse
+     * 
+     * @param object $resource
+     * @param int $status
+     * @param string $message
+     * 
+     * @return JsonResponse
      */
     private function response(
         object $resource,
@@ -61,7 +75,25 @@ class RegisteredUserController extends Controller
     }
 
     /**
+     * Handles encrypting the password of the users
+     * 
+     * @param array $payload
+     * 
+     * @return array
+     */
+    private function encryptPassword(array $payload)
+    {
+        $payload['password'] = Hash::make($payload['password']);
+
+        return $payload;
+    }
+
+    /**
      * Logs user in
+     * 
+     * @var User $user
+     *
+     * @return void
      */
     private function logUserIn(User $user): void
     {

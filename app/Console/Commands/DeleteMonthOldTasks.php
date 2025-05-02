@@ -21,10 +21,23 @@ class DeleteMonthOldTasks extends Command
      */
     protected $description = 'This command will be deleting tasks that are already a month old';
 
+    /**
+     * The default days when to delete tasks
+     * 
+     * @var int
+     */
     private const DEFAULT_DAYS = 30;
 
+    /**
+     * @var TaskService $taskService
+     */
     private TaskService $taskService;
 
+    /**
+     * @param TaskService $taskService
+     * 
+     * @return void
+     */
     public function __construct(TaskService $taskService)
     {
         $this->taskService = $taskService;

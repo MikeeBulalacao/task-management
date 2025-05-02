@@ -1,23 +1,23 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
+import InputFile from '@/Components/InputFile.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import MultiTextInput from '@/Components/MultiTextInput.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import Service from '../../../service.js'
 import TextInput from '@/Components/TextInput.vue';
-import MultiTextInput from '@/Components/MultiTextInput.vue';
-import { ref } from 'vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue'
+import { Link, useForm, usePage } from '@inertiajs/vue3'
 
-const emit = defineEmits(['hide']);
-
-const cancelDisplay = () => {
-    emit('hide');
-};
+const emit = defineEmits(['hide', 'submit'])
 
 const form = useForm({
     title: '',
     content: '',
+    published: false,
     status: 'to-do',
+    attachment: ''
 });
 
 const statuses = ref([
@@ -35,15 +35,21 @@ const statuses = ref([
     }
 ])
 
+const cancelDisplay = () => {
+    emit('hide');
+};
+
 const submit = async () => {
-    const response = await axios.post('/api/task', {
+    await Service.createTask({
         title: form.title,
         content: form.content,
-        status: form.status
+        status: form.status,
+        published: form.published,
+        attachment: form.attachment
     })
 
     form.reset('title', 'content')
-    cancelDisplay()
+    emit('submit')
 };
 </script>
 
@@ -59,43 +65,52 @@ const submit = async () => {
 
         <form @submit.prevent="submit" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="title" value="Title" />
-
+                <InputLabel for="title" value="Title *" />
                 <TextInput
                     id="title"
                     type="text"
                     class="mt-1 block w-full"
+                    maxlength="100"
                     v-model="form.title"
                     required
                     autofocus
                 />
-
                 <InputError class="mt-2" :message="form.errors.title" />
             </div>
 
             <div>
-                <InputLabel for="content" value="Content" />
-
+                <InputLabel for="content" value="Content *" />
                 <MultiTextInput
                     id="content"
+                    maxlength="255"
                     class="mt-1 block w-full"
                     v-model="form.content"
                     required
                 />
-
                 <InputError class="mt-2" :message="form.errors.content" />
             </div>
 
             <div>
-                <InputLabel for="status" value="Status" />
+                <InputLabel for="attachment" value="Attachment" />
+                <InputFile for="attachment" v-model="form.attachment"/>
+                <InputError class="mt-2" :message="form.errors.content" />
+            </div>
 
+            <div>
+                <InputLabel for="status" value="Status *" />
                 <div class="form-check" v-for="(status, index) in statuses">
-                    <input class="form-check-input" type="radio" :name="`status-${index}`" id="status" v-model="form.status" :value="status.value">
-                    <label class="form-check-label" for="status">
+                    <input
+                        class="form-check-input"
+                        type="radio"
+                        id="status"
+                        v-model="form.status"
+                        :name="`status-${index}`"
+                        :value="status.value"
+                    >
+                    <label class="form-check-label" for="`status-${index}`">
                         {{ status.name }}
                     </label>
                 </div>
-
                 <InputError class="mt-2" :message="form.errors.status" />
             </div>
 
